@@ -7,6 +7,7 @@ import re
 import os
 
 # lets test this thing
+# test again
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
