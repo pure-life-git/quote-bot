@@ -6,6 +6,7 @@ import random
 import re
 import os
 
+# lets test this thing
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
