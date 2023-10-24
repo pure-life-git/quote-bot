@@ -15,7 +15,7 @@ bot_color = discord.Color.from_rgb(21, 96, 189)
 token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
 
 f = open("PID.txt", "w")
-f.write(os.getpid())
+f.write(str(os.getpid()))
 f.close()
 
 @bot.event
