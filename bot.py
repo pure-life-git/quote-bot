@@ -15,8 +15,8 @@ bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = T
 bot.remove_command('help')
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
-find = ctypes.util.find_library('opus')
-discord.opus.load_opus(find)
+# find = ctypes.util.find_library('opus')
+# discord.opus.load_opus(find)
 
 token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
 
