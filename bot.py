@@ -91,7 +91,7 @@ async def quote(ctx, channel: discord.TextChannel):
 #         await play_music(ctx, song)
 #         return
     
-@bot.command(name="play", aliases="p")
+@bot.command(name="play", aliases=["p"])
 async def play(ctx, *args):
     song = " ".join(args)
     if song.startswith("https://www.youtube.com") or song.startswith("https://youtu.be"):
