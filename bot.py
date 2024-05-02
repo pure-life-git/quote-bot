@@ -1,11 +1,5 @@
 import discord
 from discord.ext import commands
-from discord.player import FFmpegPCMAudio
-import yt_dlp
-import ctypes
-import ctypes.util
-
-
 import asyncio
 import random
 import re
@@ -15,31 +9,8 @@ bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = T
 bot.remove_command('help')
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
-# find = ctypes.util.find_library('opus')
-# discord.opus.load_opus(find)
-
 token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
-
-#initializes an empty list for the music queue
-music_queue = []
-
-now_playing = ""
-
-song_repeating = False
-queue_repeating = False
-
-#sets opts for downloading youtube videos for the bot
-ydl_opts = {
-    'quiet': True,
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
-    }],
-    'outtmpl': './song.mp3',
-    'cookiefile': './ydl_cookies.txt'
-}
+kill_var = False
 
 @bot.event
 async def on_ready():
@@ -53,8 +24,8 @@ async def on_ready():
 #     f.close()
 
 @bot.command(name="quote", aliases=["q"])
-async def quote(ctx, channel: discord.TextChannel):
-    messages = [message async for message in  channel.history()]
+async def quote(ctx: commands.Context, channel: discord.TextChannel):
+    messages = [message async for message in channel.history()]
     rdm = random.choice(messages)
     rdm_content = rdm.content
     raw_split = re.split('"(.*?)"', rdm_content)
@@ -76,28 +47,21 @@ async def quote(ctx, channel: discord.TextChannel):
         await ctx.send(f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}")
         return
     
-# async def playlist(ctx, song):
-#     voice = ctx.guild.voice_client
-
-#     if voice:
-#         if voice.is_playing():
-#             music_queue.append(song)
-#             return
-#         else:
-#             await play_music(ctx, song)
-#             return
-#     else:
-#         await ctx.author.voice.channel.connect()
-#         await play_music(ctx, song)
-#         return
+@bot.command(name="kill", aliases=["k"])
+async def kill(ctx: commands.Context):
+    kill_var = not kill_var
+    kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_var == True else ":x: Kill Mode: Deactivated :x:"
+    await ctx.send(kill_msg)
     
-@bot.command(name="play", aliases=["p"])
-async def play(ctx, *args):
-    song = " ".join(args)
-    if song.startswith("https://www.youtube.com") or song.startswith("https://youtu.be"):
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url=song)
-            print(info)
+@bot.event
+async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    staff = bot.get_user(221115052038684683)
+
+    #if the member is stafford
+    if kill_var and member == staff:
+        if not before and after:
+            await member.disconnect()
+        return
 
 
 bot.run(token)
