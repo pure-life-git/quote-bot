@@ -55,6 +55,10 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
     staff = bot.get_user(221115052038684683)
 
+    print(member.guild.get_role(1241950590725128272))
+    print(member.roles)
+    print(before, after)
+
     #if the member is stafford
     if kill_var and member == staff:
         if not before and after:
