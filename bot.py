@@ -47,12 +47,16 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
 async def kill(ctx: commands.Context):
     file_name = "kill_switch"
     kill_state = os.path.isfile(file_name)
-    print(kill_state)
+    print("Before:",kill_state)
     if kill_state:
         os.remove(file_name)
     else:
         f = open(file_name, "x")
         f.close()
+
+    kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_state == False else ":x: Kill Mode: Deactivated :x:"
+    await ctx.send(kill_msg)
+    
     
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -61,7 +65,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
 
     #if the member is stafford
     if os.path.isfile("kill_switch") and (member == staff or member == theo):
-        if not before and after:
+        if not before.channel and after.channel:
             await member.disconnect()
         return
     
