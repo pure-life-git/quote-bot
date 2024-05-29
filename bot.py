@@ -61,7 +61,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             await member.disconnect()
         return
     
-    if member.guild.get_role(1241950590725128272) in member.roles and after.self_stream == True:
+    if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
         await member.move_to(member.guild.get_channel(1241961286774952007))
         await member.move_to(member.guild.get_channel(644075079558365188))
         await member.send(content="Certified Stafford moment", tts=True)
