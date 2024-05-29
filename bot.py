@@ -4,8 +4,8 @@ import asyncio
 import json as js
 import random
 import re
-import time
 import random
+import os
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
@@ -43,22 +43,24 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
         await ctx.send(f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}")
         return
     
-# @bot.command(name="kill", aliases=["k"])
-# async def kill(ctx: commands.Context):
-#     f = open(ctx.guild.name + ".pkl", "rb")
-#     d = pickle.load(f)
-#     kill_var = d["kill_var"]
-#     kill_var = not kill_var
-#     d["kill_var"]
-#     kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_var == True else ":x: Kill Mode: Deactivated :x:"
-#     await ctx.send(kill_msg)
+@bot.command(name="kill", aliases=["k"])
+async def kill(ctx: commands.Context):
+    file_name = "kill_switch"
+    kill_state = os.path.isfile(file_name)
+    print(kill_state)
+    if kill_state:
+        os.remove(file_name)
+    else:
+        f = open(file_name, "x")
+        f.close()
     
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
     staff = bot.get_user(221115052038684683)
+    theo = bot.get_user(288710564367171595)
 
     #if the member is stafford
-    if kill_var and member == staff:
+    if os.path.isfile("kill_switch") and (member == staff or member == theo):
         if not before and after:
             await member.disconnect()
         return
