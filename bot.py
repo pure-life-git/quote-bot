@@ -4,6 +4,8 @@ import asyncio
 import json as js
 import random
 import re
+import time
+import random
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
@@ -62,6 +64,9 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         return
     
     if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
+        sleeper_agent = random.randint(30,500)
+        print(f"Booting {member.name} in {sleeper_agent} seconds")
+        time.sleep(sleeper_agent)
         await member.move_to(member.guild.get_channel(1241961286774952007))
         await member.move_to(member.guild.get_channel(644075079558365188))
         await member.send(content="Certified Stafford moment", tts=True)
