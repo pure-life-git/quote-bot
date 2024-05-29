@@ -66,7 +66,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     #if the member is stafford
     if os.path.isfile("kill_switch") and (member == staff or member == theo):
         if not before.channel and after.channel:
-            await member.disconnect()
+            await member.move_to(None)
         return
     
     if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
