@@ -65,7 +65,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             await member.disconnect()
         return
     
-    if member.guild.get_role(1241950590725128272) in member.roles and after == discord.VoiceState.self_stream:
+    if member.guild.get_role(1241950590725128272) in member.roles and after.self_stream == True:
         await member.move_to(1241961286774952007)
         await member.move_to(644075079558365188)
 
