@@ -55,10 +55,6 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
     staff = bot.get_user(221115052038684683)
 
-    print(member.guild.get_role(1241950590725128272))
-    print(member.roles)
-    print(before, after)
-
     #if the member is stafford
     if kill_var and member == staff:
         if not before and after:
@@ -68,6 +64,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     if member.guild.get_role(1241950590725128272) in member.roles and after.self_stream == True:
         await member.move_to(member.guild.get_channel(1241961286774952007))
         await member.move_to(member.guild.get_channel(644075079558365188))
+        await member.send(content="Certified Stafford moment", tts=True)
 
 
 
