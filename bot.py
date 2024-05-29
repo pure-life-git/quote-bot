@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
+import json as js
 import random
 import re
 
@@ -15,13 +16,6 @@ kill_var = False
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-
-# @bot.event
-# async def on_guild_join(guild: discord.Guild):
-#     d = {"guild_id": guild.id}
-#     f = open("bot.json", "a")
-#     f.write(json.dumps(d, indent=4))
-#     f.close()
 
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
@@ -47,11 +41,15 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
         await ctx.send(f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}")
         return
     
-@bot.command(name="kill", aliases=["k"])
-async def kill(ctx: commands.Context):
-    kill_var = not kill_var
-    kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_var == True else ":x: Kill Mode: Deactivated :x:"
-    await ctx.send(kill_msg)
+# @bot.command(name="kill", aliases=["k"])
+# async def kill(ctx: commands.Context):
+#     f = open(ctx.guild.name + ".pkl", "rb")
+#     d = pickle.load(f)
+#     kill_var = d["kill_var"]
+#     kill_var = not kill_var
+#     d["kill_var"]
+#     kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_var == True else ":x: Kill Mode: Deactivated :x:"
+#     await ctx.send(kill_msg)
     
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -62,6 +60,11 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         if not before and after:
             await member.disconnect()
         return
+    
+    if member.guild.get_role(1241950590725128272) in member.roles and after == discord.VoiceState.self_stream:
+        await member.move_to(1241961286774952007)
+        await member.move_to(644075079558365188)
+
 
 
 bot.run(token)
