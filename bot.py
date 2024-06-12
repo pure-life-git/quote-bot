@@ -1,11 +1,10 @@
-import discord
-from discord.ext import commands
-import asyncio
-import json as js
-import random
+import os
 import re
 import random
-import os
+import asyncio
+import discord
+import json as js
+from discord.ext import commands
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
@@ -13,7 +12,6 @@ bot.remove_command('help')
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
 token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
-kill_var = False
 
 @bot.event
 async def on_ready():
@@ -60,23 +58,29 @@ async def kill(ctx: commands.Context):
     
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
-    staff = bot.get_user(221115052038684683)
-    theo = bot.get_user(288710564367171595)
+    death_note = [
+        bot.get_user(221115052038684683) #stafford
+        # bot.get_user(288710564367171595)  #theo
+    ]
 
     #if the member is stafford
-    if os.path.isfile("kill_switch") and (member == staff or member == theo):
+    if os.path.isfile("kill_switch") and member in death_note:
         if not before.channel and after.channel:
             await member.move_to(None)
         return
     
-    if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
-        sleeper_agent = random.randint(30,300)
-        print(f"Booting {member.name} in {sleeper_agent} seconds")
-        await asyncio.sleep(sleeper_agent)
-        await member.move_to(member.guild.get_channel(1241961286774952007))
-        await member.move_to(member.guild.get_channel(644075079558365188))
-        await member.send(content="Certified Stafford moment", tts=True)
+    # if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
+    #     sleeper_agent = random.randint(30,300)
+    #     print(f"Booting {member.name} in {sleeper_agent} seconds")
+        
+    #     theo = bot.get_user(288710564367171595)
+    #     await theo.send(content=f"Booting {member.name} in {sleeper_agent} seconds")
 
+    #     await asyncio.sleep(sleeper_agent)
 
+    #     await member.move_to(member.guild.get_channel(1241961286774952007))
+    #     await member.move_to(member.guild.get_channel(644075079558365188))
+
+    #     await member.send(content="Certified Stafford moment", tts=True)
 
 bot.run(token)
