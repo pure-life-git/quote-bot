@@ -76,7 +76,8 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
     counting_id = channel.id
     guild_id = channel.guild.id
 
-    last_message = channel.history(limit=1).flatten()[0]
+    last_message = [message async for message in channel.history(limit=1)]  
+
     print(last_message)
     if last_message is not None:
         cur_counting = int(channel.last_message.content)
