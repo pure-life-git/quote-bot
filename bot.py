@@ -19,9 +19,10 @@ cur = conn.cursor()
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    res = cur.execute("SELECT COUNT(*) FROM servers;")
-    num_servers = res.fetchone()[0]
+    num_servers = len(bot.guilds)
     print(f"Monitoring {num_servers} servers!")
+
+    #* TODO: Auto update based on bot.guilds vs SELECT *
 
 @bot.event
 async def on_guild_join(guild: discord.Guild):
