@@ -73,13 +73,22 @@ async def kill(ctx: commands.Context):
 
 @bot.command(name="countingchannel", aliases=["pcc"])
 async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChannel):
-    async for msg in channel.history(limit=1):
-        if msg:
-            # set servers current counting number to last message in channel
-            pass
-        else:
-            await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
-            await channel.send("1")
+    counting_id = channel.id
+    guild_id = channel.guild.id
+
+    if channel.last_message is not None:
+        cur_counting = int(channel.last_message.content)
+    else:
+        await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
+        await channel.send("1")
+        cur_counting = 1
+
+    sql = f"UPDATE servers SET counting_id = {counting_id}, cur_counting = {cur_counting} WHERE guild_id = {guild_id};"
+    cur.execute(sql)
+    conn.commit()
+
+    await ctx.channel.send(f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}")
+
     
 
     
