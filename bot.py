@@ -71,12 +71,14 @@ async def kill(ctx: commands.Context):
     kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_state == False else ":x: Kill Mode: Deactivated :x:"
     await ctx.send(kill_msg)
 
-@bot.command(name="countingchannel", aliases=["pcc"])
+@bot.command(name="pickcountingchannel", aliases=["pcc"])
 async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChannel):
     counting_id = channel.id
     guild_id = channel.guild.id
 
-    if channel.last_message is not None:
+    last_message = channel.history(limit=1).flatten()[0]
+    print(last_message)
+    if last_message is not None:
         cur_counting = int(channel.last_message.content)
     else:
         await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
@@ -88,9 +90,6 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
     conn.commit()
 
     await ctx.channel.send(f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}")
-
-    
-
     
     
 @bot.event
