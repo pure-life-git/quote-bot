@@ -3,7 +3,7 @@ import re
 import random
 import asyncio
 import discord
-import json as js
+import sqlite3
 from discord.ext import commands
 
 intents = discord.Intents.all()
@@ -13,9 +13,15 @@ bot_color = discord.Color.from_rgb(21, 96, 189)
 
 token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
 
+conn = sqlite3.connect("bot.db")
+cur = conn.cursor()
+
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
+    res = cur.execute("SELECT COUNT(*) FROM servers;")
+    num_servers = res.fetchone()
+    print(f"Monitoring {num_servers} servers!")
 
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
@@ -54,6 +60,18 @@ async def kill(ctx: commands.Context):
 
     kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_state == False else ":x: Kill Mode: Deactivated :x:"
     await ctx.send(kill_msg)
+
+@bot.command(name="countingchannel", aliases=["pcc"])
+async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChannel):
+    async for msg in channel.history(limit=1):
+        if msg:
+            # set servers current counting number to last message in channel
+            pass
+        else:
+            await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
+            await channel.send("1")
+    
+
     
     
 @bot.event
