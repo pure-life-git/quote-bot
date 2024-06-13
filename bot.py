@@ -80,7 +80,7 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
 
     print(last_message)
     if last_message is not None:
-        cur_counting = int(channel.last_message.content)
+        cur_counting = int(last_message.content)
     else:
         await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
         await channel.send("1")
