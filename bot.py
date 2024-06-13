@@ -20,8 +20,15 @@ cur = conn.cursor()
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     res = cur.execute("SELECT COUNT(*) FROM servers;")
-    num_servers = res.fetchone()
+    num_servers = res.fetchone()[0]
     print(f"Monitoring {num_servers} servers!")
+
+@bot.event
+async def on_guild_join(guild: discord.Guild):
+    guild_id = guild.id
+    guild_name = guild.name
+    sql = f"INSERT INTO servers(guild_id, guild_name) VALUES ({guild_id}, {guild_name});"
+    cur.execute(sql)
 
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
