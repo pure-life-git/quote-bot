@@ -29,6 +29,8 @@ async def on_guild_join(guild: discord.Guild):
     guild_name = guild.name
     sql = f"INSERT INTO servers(guild_id, guild_name) VALUES ({guild_id}, '{guild_name}');"
     cur.execute(sql)
+    conn.commit()
+    print(f"Added {guild_name} to DB")
 
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
