@@ -91,6 +91,46 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
 
     await ctx.channel.send(f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}")
     
+@bot.event
+async def on_message(ctx: commands.Context, message: discord.Message):
+    msg_id = message.id
+    msg_channel = message.channel
+    msg_channel_id = msg_channel.id
+    msg_guild = message.guild
+    msg_guild_id = msg_guild.id
+    msg_author = message.author
+    msg_author_id = msg_author.id
+    msg_content = message.content
+
+    # get counting channel for current server
+    sql = f"SELECT counting_id FROM servers WHERE guild_id = {msg_guild_id};"
+    cur.execute(sql)
+
+    db_counting_id = cur.fetchone()[0]
+
+    # if message is in counting channel...
+    if db_counting_id == msg_channel_id:
+        # check current counting numbers
+        sql = f"SELECT cur_counting FROM servers WHERE guild_id = {msg_guild_id};"
+        cur.execute(sql)
+        cur_counting = cur.fetchone()[0]
+
+        # if message is correct...
+        if int(msg_content) == (cur_counting + 1):
+            sql = f"UPDATE servers SET cur_counting = {int(msg_content)} WHERE guild_id = {msg_guild_id};"
+            cur.execute(sql)
+            sql = f"UPDATE users SET streak = streak + 1, points = points + 10 WHERE user_id = {msg_author_id};"
+            cur.execute(sql)
+            conn.commit()
+        else:
+            sql = f"UPDATE users SET streak = 0, strikes = strike + 1 WHERE user_id = {msg_author_id};"
+            cur.execute(sql)
+            conn.commit()
+            sql = f"SELECT strikes, points FROM users WHERE user_id = {msg_author_id};"
+            cur.execute()
+            strikes, points = cur.fetchall()
+            await msg_channel.send(f"Oh no! {msg_author} fucked it up for everyone! They should be berated.\nPerpetrator: {msg_author.mention}\nStrikes: {strikes}\nPoints: {points}")
+
     
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
