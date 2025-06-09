@@ -1,28 +1,34 @@
-import os
-import re
-import random
 import asyncio
-import discord
+import os
+import random
+import re
 import sqlite3
+
+import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()
 
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix = '?', intents = intents, case_insensitive = True)
-bot.remove_command('help')
+bot = commands.Bot(command_prefix="?", intents=intents, case_insensitive=True)
+bot.remove_command("help")
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
-token = "MTE1ODI2NzQxOTI5MTI4NzYxMg.GHoFGA.GMC5HHXW_tVLzog203fvJXRNH8SIMxDR3Fgwcs"
+token = os.get_env("TOKEN")
 
 conn = sqlite3.connect("bot.db")
 cur = conn.cursor()
 
+
 @bot.event
 async def on_ready():
-    print(f'{bot.user.name} has connected to Discord!')
+    print(f"{bot.user.name} has connected to Discord!")
     num_servers = len(bot.guilds)
     print(f"Monitoring {num_servers} servers!")
 
-    #* TODO: Auto update based on bot.guilds vs SELECT *
+    # * TODO: Auto update based on bot.guilds vs SELECT *
+
 
 @bot.event
 async def on_guild_join(guild: discord.Guild):
@@ -33,6 +39,7 @@ async def on_guild_join(guild: discord.Guild):
     conn.commit()
     print(f"Added {guild_name} to DB")
 
+
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
     messages = [message async for message in channel.history()]
@@ -40,36 +47,48 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
     rdm_content = rdm.content
     raw_split = re.split('"(.*?)"', rdm_content)
     raw_poem = raw_split[1]
-    raw_scribe = raw_split[2].split('-', maxsplit=2)[1]
+    raw_scribe = raw_split[2].split("-", maxsplit=2)[1]
     if raw_scribe[0] == " ":
         raw_scribe = raw_scribe[1:]
     raw_scribe = raw_scribe.split(" ")[0]
     await ctx.send(f'"{raw_poem}"')
     try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == ctx.author, timeout=30.0)
+        msg = await bot.wait_for(
+            "message", check=lambda m: m.author == ctx.author, timeout=30.0
+        )
         if msg.content.lower() == raw_scribe.lower():
             await ctx.send(f"Correct! You win.\nSee original message: {rdm.jump_url}")
             return
         else:
-            await ctx.send(f"So close! The correct answer was {raw_scribe}.\nSee original message: {rdm.jump_url}")
+            await ctx.send(
+                f"So close! The correct answer was {raw_scribe}.\nSee original message: {rdm.jump_url}"
+            )
             return
     except asyncio.TimeoutError:
-        await ctx.send(f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}")
+        await ctx.send(
+            f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}"
+        )
         return
-    
+
+
 @bot.command(name="kill", aliases=["k"])
 async def kill(ctx: commands.Context):
     file_name = "kill_switch"
     kill_state = os.path.isfile(file_name)
-    print("Before:",kill_state)
+    print("Before:", kill_state)
     if kill_state:
         os.remove(file_name)
     else:
         f = open(file_name, "x")
         f.close()
 
-    kill_msg = ":rotating_light: Kill Mode: Activated :rotating_light:" if kill_state == False else ":x: Kill Mode: Deactivated :x:"
+    kill_msg = (
+        ":rotating_light: Kill Mode: Activated :rotating_light:"
+        if kill_state == False
+        else ":x: Kill Mode: Deactivated :x:"
+    )
     await ctx.send(kill_msg)
+
 
 @bot.command(name="pickcountingchannel", aliases=["pcc"])
 async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChannel):
@@ -81,7 +100,9 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
     if len(last_message_list) == 1:
         cur_counting = int(last_message_list[0].content)
     else:
-        await channel.send(f"# Welcome to the new counting channel!\nI'll start things off...")
+        await channel.send(
+            f"# Welcome to the new counting channel!\nI'll start things off..."
+        )
         await channel.send("1")
         cur_counting = 1
 
@@ -89,8 +110,11 @@ async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChan
     cur.execute(sql)
     conn.commit()
 
-    await ctx.channel.send(f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}")
-    
+    await ctx.channel.send(
+        f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}"
+    )
+
+
 @bot.event
 async def on_message(ctx: commands.Context, message: discord.Message):
     msg_id = message.id
@@ -129,26 +153,30 @@ async def on_message(ctx: commands.Context, message: discord.Message):
             sql = f"SELECT strikes, points FROM users WHERE user_id = {msg_author_id};"
             cur.execute()
             strikes, points = cur.fetchall()
-            await msg_channel.send(f"Oh no! {msg_author} fucked it up for everyone! They should be berated.\nPerpetrator: {msg_author.mention}\nStrikes: {strikes}\nPoints: {points}")
+            await msg_channel.send(
+                f"Oh no! {msg_author} fucked it up for everyone! They should be berated.\nPerpetrator: {msg_author.mention}\nStrikes: {strikes}\nPoints: {points}"
+            )
 
-    
+
 @bot.event
-async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+async def on_voice_state_update(
+    member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+):
     death_note = [
-        bot.get_user(221115052038684683) #stafford
+        bot.get_user(221115052038684683)  # stafford
         # bot.get_user(288710564367171595)  #theo
     ]
 
-    #if the member is stafford
+    # if the member is stafford
     if os.path.isfile("kill_switch") and member in death_note:
         if not before.channel and after.channel:
             await member.move_to(None)
         return
-    
+
     # if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
     #     sleeper_agent = random.randint(30,300)
     #     print(f"Booting {member.name} in {sleeper_agent} seconds")
-        
+
     #     theo = bot.get_user(288710564367171595)
     #     await theo.send(content=f"Booting {member.name} in {sleeper_agent} seconds")
 
@@ -159,4 +187,6 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
 
     #     await member.send(content="Certified Stafford moment", tts=True)
 
+
 bot.run(token)
+
