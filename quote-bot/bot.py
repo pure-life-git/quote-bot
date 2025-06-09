@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix="?", intents=intents, case_insensitive=True)
 bot.remove_command("help")
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
-token = os.get_env("TOKEN")
+token = os.getenv("TOKEN")
 
 conn = sqlite3.connect("bot.db")
 cur = conn.cursor()
@@ -28,16 +28,6 @@ async def on_ready():
     print(f"Monitoring {num_servers} servers!")
 
     # * TODO: Auto update based on bot.guilds vs SELECT *
-
-
-@bot.event
-async def on_guild_join(guild: discord.Guild):
-    guild_id = guild.id
-    guild_name = guild.name
-    sql = f"INSERT INTO servers(guild_id, guild_name) VALUES ({guild_id}, '{guild_name}');"
-    cur.execute(sql)
-    conn.commit()
-    print(f"Added {guild_name} to DB")
 
 
 @bot.command(name="quote", aliases=["q"])
@@ -90,74 +80,6 @@ async def kill(ctx: commands.Context):
     await ctx.send(kill_msg)
 
 
-@bot.command(name="pickcountingchannel", aliases=["pcc"])
-async def pick_counting_channel(ctx: commands.Context, channel: discord.TextChannel):
-    counting_id = channel.id
-    guild_id = channel.guild.id
-
-    last_message_list = [message async for message in channel.history(limit=1)]
-
-    if len(last_message_list) == 1:
-        cur_counting = int(last_message_list[0].content)
-    else:
-        await channel.send(
-            f"# Welcome to the new counting channel!\nI'll start things off..."
-        )
-        await channel.send("1")
-        cur_counting = 1
-
-    sql = f"UPDATE servers SET counting_id = {counting_id}, cur_counting = {cur_counting} WHERE guild_id = {guild_id};"
-    cur.execute(sql)
-    conn.commit()
-
-    await ctx.channel.send(
-        f"Set counting channel to {channel.jump_url}, with a current count of {cur_counting}"
-    )
-
-
-@bot.event
-async def on_message(ctx: commands.Context, message: discord.Message):
-    msg_id = message.id
-    msg_channel = message.channel
-    msg_channel_id = msg_channel.id
-    msg_guild = message.guild
-    msg_guild_id = msg_guild.id
-    msg_author = message.author
-    msg_author_id = msg_author.id
-    msg_content = message.content
-
-    # get counting channel for current server
-    sql = f"SELECT counting_id FROM servers WHERE guild_id = {msg_guild_id};"
-    cur.execute(sql)
-
-    db_counting_id = cur.fetchone()[0]
-
-    # if message is in counting channel...
-    if db_counting_id == msg_channel_id:
-        # check current counting numbers
-        sql = f"SELECT cur_counting FROM servers WHERE guild_id = {msg_guild_id};"
-        cur.execute(sql)
-        cur_counting = cur.fetchone()[0]
-
-        # if message is correct...
-        if int(msg_content) == (cur_counting + 1):
-            sql = f"UPDATE servers SET cur_counting = {int(msg_content)} WHERE guild_id = {msg_guild_id};"
-            cur.execute(sql)
-            sql = f"UPDATE users SET streak = streak + 1, points = points + 10 WHERE user_id = {msg_author_id};"
-            cur.execute(sql)
-            conn.commit()
-        else:
-            sql = f"UPDATE users SET streak = 0, strikes = strike + 1 WHERE user_id = {msg_author_id};"
-            cur.execute(sql)
-            conn.commit()
-            sql = f"SELECT strikes, points FROM users WHERE user_id = {msg_author_id};"
-            cur.execute()
-            strikes, points = cur.fetchall()
-            await msg_channel.send(
-                f"Oh no! {msg_author} fucked it up for everyone! They should be berated.\nPerpetrator: {msg_author.mention}\nStrikes: {strikes}\nPoints: {points}"
-            )
-
-
 @bot.event
 async def on_voice_state_update(
     member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
@@ -189,4 +111,3 @@ async def on_voice_state_update(
 
 
 bot.run(token)
-

@@ -1,0 +1,7 @@
+services:
+  quote-bot:
+    build: .
+    container_name: quote-bot
+    environment:
+      - TOKEN=${TOKEN}
+    restart: unless-stopped

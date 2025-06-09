@@ -2,7 +2,7 @@ FROM python:3.13
 
 WORKDIR /app
 
-COPY requirements.txt
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -10,4 +10,4 @@ COPY . /app
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "bot.py"]
+CMD ["python", "quote-bot/bot.py"]
