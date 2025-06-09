@@ -1,0 +1,17 @@
+[project]
+name = "quote-bot"
+version = "0.1.0"
+description = "Whose Quote Is It Anyway? Bot. A fun guessing game for Discord quote channels"
+authors = [
+    {name = "pure-life-git"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "discord (>=2.3.2,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
