@@ -1,14 +1,13 @@
 FROM python:3.13
 
-RUN pip install poetry
-
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
-COPY quote-bot ./quote-bot
+COPY requirements.txt
 
-RUN touch README.md
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN poetry install --without dev
+COPY . /app
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "quote-bot.main"]
+ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "bot.py"]
