@@ -30,6 +30,11 @@ async def on_ready():
     # * TODO: Auto update based on bot.guilds vs SELECT *
 
 
+@bot.command(name="ping", aliases=["p"])
+async def ping(ctx):
+    await ctx.send("Pong")
+
+
 @bot.command(name="quote", aliases=["q"])
 async def quote(ctx: commands.Context, channel: discord.TextChannel):
     messages = [message async for message in channel.history()]
