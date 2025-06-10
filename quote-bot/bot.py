@@ -5,8 +5,11 @@ import re
 import sqlite3
 
 import discord
+import requests
 from discord.ext import commands
 from dotenv import load_dotenv
+
+# from siegeapi import Auth
 
 load_dotenv()
 
@@ -19,6 +22,89 @@ token = os.getenv("TOKEN")
 
 conn = sqlite3.connect("bot.db")
 cur = conn.cursor()
+
+# siege_auth = Auth(os.getenv("UBI_EMAIL"), os.getenv("UBI_PSWD"))
+
+attackers = [
+    "rauora",
+    "striker",
+    "deimos",
+    "ram",
+    "brava",
+    "grim",
+    "sens",
+    "osa",
+    "flores",
+    "zero",
+    "ace",
+    "iana",
+    "kali",
+    "amaru",
+    "nokk",
+    "gridlock",
+    "nomad",
+    "maverick",
+    "lion",
+    "finka",
+    "dokkaebi",
+    "zofia",
+    "ying",
+    "jackal",
+    "hibana",
+    "capitao",
+    "blackbeard",
+    "buck",
+    "sledge",
+    "thatcher",
+    "ash",
+    "thermite",
+    "montagne",
+    "twitch",
+    "blitz",
+    "IQ",
+    "fuze",
+    "glaz",
+]
+
+defenders = [
+    "skopos",
+    "sentry",
+    "tubarao",
+    "fenrir",
+    "solis",
+    "azami",
+    "thorn",
+    "thunderbird",
+    "aruni",
+    "melusi",
+    "oryx",
+    "wamai",
+    "goyo",
+    "warden",
+    "mozzie",
+    "kaid",
+    "clash",
+    "maestro",
+    "alibi",
+    "vigil",
+    "ela",
+    "lesion",
+    "mira",
+    "echo",
+    "caveira",
+    "valkyrie",
+    "frost",
+    "mute",
+    "smoke",
+    "castle",
+    "pulse",
+    "doc",
+    "rook",
+    "jager",
+    "bandit",
+    "tachanka",
+    "kapkan",
+]
 
 
 @bot.event
@@ -64,6 +150,18 @@ async def quote(ctx: commands.Context, channel: discord.TextChannel):
             f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}"
         )
         return
+
+
+@bot.command(name="op")
+async def operator_select(ctx: commands.Context, side: str):
+    if side.lower() in ["attack", "a"]:
+        await ctx.send(
+            f"You should play {attackers[random.randint(0,len(attackers)-1)]}!"
+        )
+    elif side.lower() in ["defend", "defense", "d"]:
+        await ctx.send(
+            f"You should play {defenders[random.randint(0,len(defenders)-1)]}"
+        )
 
 
 @bot.command(name="kill", aliases=["k"])
