@@ -5,7 +5,6 @@ import re
 import sqlite3
 
 import discord
-import requests
 from discord.ext import commands
 from dotenv import load_dotenv
 
