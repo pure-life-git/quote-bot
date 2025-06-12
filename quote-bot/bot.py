@@ -3,9 +3,9 @@ import os
 import random
 import re
 import sqlite3
+import time
 
 import discord
-from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -14,18 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class discordClient(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix="?", intents=discord.Intents.all(), case_insensitive=True
-        )
-        self.tree = app_commands.CommandTree(self)
-
-    async def setup_hook(self):
-        await self.tree.sync()
-
-
-bot = discordClient()
+bot = discord.Bot(command_prefix="?", intents=discord.Intents.all())
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
 
@@ -36,90 +25,12 @@ cur = conn.cursor()
 
 # siege_auth = Auth(os.getenv("UBI_EMAIL"), os.getenv("UBI_PSWD"))
 
-attackers = [
-    "rauora",
-    "striker",
-    "deimos",
-    "ram",
-    "brava",
-    "grim",
-    "sens",
-    "osa",
-    "flores",
-    "zero",
-    "ace",
-    "iana",
-    "kali",
-    "amaru",
-    "nokk",
-    "gridlock",
-    "nomad",
-    "maverick",
-    "lion",
-    "finka",
-    "dokkaebi",
-    "zofia",
-    "ying",
-    "jackal",
-    "hibana",
-    "capitao",
-    "blackbeard",
-    "buck",
-    "sledge",
-    "thatcher",
-    "ash",
-    "thermite",
-    "montagne",
-    "twitch",
-    "blitz",
-    "IQ",
-    "fuze",
-    "glaz",
-]
-
-defenders = [
-    "skopos",
-    "sentry",
-    "tubarao",
-    "fenrir",
-    "solis",
-    "azami",
-    "thorn",
-    "thunderbird",
-    "aruni",
-    "melusi",
-    "oryx",
-    "wamai",
-    "goyo",
-    "warden",
-    "mozzie",
-    "kaid",
-    "clash",
-    "maestro",
-    "alibi",
-    "vigil",
-    "ela",
-    "lesion",
-    "mira",
-    "echo",
-    "caveira",
-    "valkyrie",
-    "frost",
-    "mute",
-    "smoke",
-    "castle",
-    "pulse",
-    "doc",
-    "rook",
-    "jager",
-    "bandit",
-    "tachanka",
-    "kapkan",
-]
+guild_ids = {"truck_stop": 644075079558365184, "alley": 599808865093287956}
 
 
 @bot.event
 async def on_ready():
+    await bot.sync_commands()
     print(f"{bot.user.name} has connected to Discord!")
     num_servers = len(bot.guilds)
     print(f"Monitoring {num_servers} servers!")
@@ -127,106 +38,67 @@ async def on_ready():
     # * TODO: Auto update based on bot.guilds vs SELECT *
 
 
-@bot.tree.command(name="ping", description="Test ping command")
-@app_commands.describe(pong="str to respond with")
-async def ping(interaction: discord.Interaction, pong: str):
-    await interaction.response.send_message(f"{pong}")
+@bot.slash_command(name="ping", description="Test ping command")
+async def ping(ctx):
+    await ctx.respond("Pong!")
 
 
-# @bot.command(name="quote", aliases=["q"])
-# async def quote(ctx: commands.Context, channel: discord.TextChannel):
-#     messages = [message async for message in channel.history()]
-#     rdm = random.choice(messages)
-#     rdm_content = rdm.content
-#     raw_split = re.split('"(.*?)"', rdm_content)
-#     raw_poem = raw_split[1]
-#     raw_scribe = raw_split[2].split("-", maxsplit=2)[1]
-#     if raw_scribe[0] == " ":
-#         raw_scribe = raw_scribe[1:]
-#     raw_scribe = raw_scribe.split(" ")[0]
-#     await ctx.send(f'"{raw_poem}"')
-#     try:
-#         msg = await bot.wait_for(
-#             "message", check=lambda m: m.author == ctx.author, timeout=30.0
-#         )
-#         if msg.content.lower() == raw_scribe.lower():
-#             await ctx.send(f"Correct! You win.\nSee original message: {rdm.jump_url}")
-#             return
-#         else:
-#             await ctx.send(
-#                 f"So close! The correct answer was {raw_scribe}.\nSee original message: {rdm.jump_url}"
-#             )
-#             return
-#     except asyncio.TimeoutError:
-#         await ctx.send(
-#             f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}"
-#         )
-#         return
-#
-#
-# @bot.command(name="op")
-# async def operator_select(ctx: commands.Context, side: str):
-#     if side.lower() in ["attack", "a"]:
-#         await ctx.send(
-#             f"You should play {attackers[random.randint(0,len(attackers)-1)]}!"
-#         )
-#     elif side.lower() in ["defend", "defense", "d"]:
-#         await ctx.send(
-#             f"You should play {defenders[random.randint(0,len(defenders)-1)]}"
-#         )
-#
-#
-# # @bot.command(name="timer", aliases=["t"])
-# # async def set_timer(ctx: )
-#
-#
-# @bot.command(name="kill", aliases=["k"])
-# async def kill(ctx: commands.Context):
-#     file_name = "kill_switch"
-#     kill_state = os.path.isfile(file_name)
-#     print("Before:", kill_state)
-#     if kill_state:
-#         os.remove(file_name)
-#     else:
-#         f = open(file_name, "x")
-#         f.close()
-#
-#     kill_msg = (
-#         ":rotating_light: Kill Mode: Activated :rotating_light:"
-#         if kill_state == False
-#         else ":x: Kill Mode: Deactivated :x:"
-#     )
-#     await ctx.send(kill_msg)
-#
-#
-# @bot.event
-# async def on_voice_state_update(
-#     member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
-# ):
-#     death_note = [
-#         bot.get_user(221115052038684683)  # stafford
-#         # bot.get_user(288710564367171595)  #theo
-#     ]
-#
-#     # if the member is stafford
-#     if os.path.isfile("kill_switch") and member in death_note:
-#         if not before.channel and after.channel:
-#             await member.move_to(None)
-#         return
-#
-#     # if member.guild.get_role(1241950590725128272) in member.roles and (before.self_stream == False and after.self_stream == True):
-#     #     sleeper_agent = random.randint(30,300)
-#     #     print(f"Booting {member.name} in {sleeper_agent} seconds")
-#
-#     #     theo = bot.get_user(288710564367171595)
-#     #     await theo.send(content=f"Booting {member.name} in {sleeper_agent} seconds")
-#
-#     #     await asyncio.sleep(sleeper_agent)
-#
-#     #     await member.move_to(member.guild.get_channel(1241961286774952007))
-#     #     await member.move_to(member.guild.get_channel(644075079558365188))
-#
-#     #     await member.send(content="Certified Stafford moment", tts=True)
+@bot.slash_command(
+    name="quote",
+    description="Name the person who said the quote!",
+    guild_ids=[guild_ids["alley"], guild_ids["truck_stop"]],
+)
+async def quote(ctx, channel: discord.TextChannel):
+    await ctx.defer()
+
+    messages = [message async for message in channel.history()]
+    rdm = random.choice(messages)
+    rdm_content = rdm.content
+
+    raw_split = re.split('"(.*?)"', rdm_content)
+    raw_poem = raw_split[1]
+    raw_scribe = raw_split[2].split("-", maxsplit=2)[1]
+
+    if raw_scribe[0] == " ":
+        raw_scribe = raw_scribe[1:]
+    raw_scribe = raw_scribe.split(" ")[0]
+
+    await ctx.respond(f'"{raw_poem}"')
+
+    try:
+        msg = await bot.wait_for(
+            "message", check=lambda m: m.author == ctx.author, timeout=30.0
+        )
+        if msg.content.lower() == raw_scribe.lower():
+            await ctx.followup.send(
+                f"Correct! You win.\nSee original message: {rdm.jump_url}"
+            )
+            return
+        else:
+            await ctx.followup.send(
+                f"So close! The correct answer was {raw_scribe}.\nSee original message: {rdm.jump_url}"
+            )
+            return
+    except asyncio.TimeoutError:
+        await ctx.followup.send(
+            f"Challenge timed out! The correct answer was {raw_scribe}!\nSee original message: {rdm.jump_url}"
+        )
+        return
+
+
+@bot.slash_command(
+    name="timer",
+    guild_ids=[
+        "599808865093287956",
+    ],
+)
+async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
+    await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
+    timer_time = (hours * 3600) + (minutes * 60) + seconds
+
+    await asyncio.sleep(timer_time)
+
+    await ctx.followup.send(":rotating_light: Timer done! :rotating_light:")
 
 
 bot.run(token)
