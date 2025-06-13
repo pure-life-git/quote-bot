@@ -93,6 +93,11 @@ async def quote(ctx, channel: discord.TextChannel):
     ],
 )
 async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
+
+    timer_embed = discord.Embed(
+        title="Timer", description=f"Timer set for {hours}h {minutes}m {seconds}s"
+    )
+
     await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
     timer_time = (hours * 3600) + (minutes * 60) + seconds
 
