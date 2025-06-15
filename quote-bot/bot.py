@@ -97,9 +97,9 @@ def get_timer_progress(duration, start_time):
     print(f"finish_time: {finish_time}")
     print(f"time_left_secs: {time_left_secs}")
 
-    time_left_percent = str(round((time_left_secs / duration) * 100)) + "%"
+    time_left_percent = str(100 - (round((time_left_secs / duration) * 100))) + "%"
 
-    time_left = str(datetime.timedelta(seconds=time_left_secs))
+    time_left = str(round(datetime.timedelta(seconds=time_left_secs).total_seconds()))
 
     finish_time_form = str(datetime.datetime.fromtimestamp(finish_time))
 
