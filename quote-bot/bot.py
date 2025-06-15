@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import os
 import random
 import re
@@ -87,6 +88,24 @@ async def quote(ctx, channel: discord.TextChannel):
         return
 
 
+def get_timer_progress(duration, start_time):
+    cur_time = time.time()
+    finish_time = start_time + duration
+    time_left_secs = finish_time - cur_time
+
+    time_left_percent = str(round((time_left_secs / duration) * 100)) + "%"
+
+    time_left = str(datetime.timedelta(seconds=time_left_secs))
+
+    finish_time_form = str(datetime.datetime.fromtimestamp(finish_time))
+
+    return {
+        "percent": time_left_percent,
+        "time_left": time_left,
+        "finish_time": finish_time_form,
+    }
+
+
 @bot.slash_command(
     name="timer",
     guild_ids=[
@@ -94,6 +113,10 @@ async def quote(ctx, channel: discord.TextChannel):
     ],
 )
 async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
+    start_time = time.time()
+    timer_time = (hours * 3600) + (minutes * 60) + seconds
+
+    res = get_timer_progress(timer_time, start_time)
 
     timer_embed = discord.Embed(
         title="Timer",
@@ -101,12 +124,11 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         color=bot_color,
     )
 
-    timer_embed.add_field(name="Test Field", value=":rotating_light:")
+    timer_embed.add_field(name="Percent", value=res["percent"])
+    timer_embed.add_field(name="Time Left", value=res["time_left"])
+    timer_embed.add_field(name="Finish Time", value=res["finish_time"])
 
-    await ctx.respond(
-        f"Timer set for {hours}h {minutes}m {seconds}s", embeds=[timer_embed]
-    )
-    timer_time = (hours * 3600) + (minutes * 60) + seconds
+    await ctx.respond(embeds=[timer_embed])
 
     await asyncio.sleep(timer_time)
 
