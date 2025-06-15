@@ -35,14 +35,15 @@ async def on_ready():
     num_servers = len(bot.guilds)
     print(f"Monitoring {num_servers} servers!")
 
-    # * TODO: Auto update based on bot.guilds vs SELECT *
 
-
+# NOTE: Testing command to ensure bot's connection to discord
 @bot.slash_command(name="ping", description="Test ping command")
 async def ping(ctx):
     await ctx.respond("Pong!")
 
 
+# NOTE: Main quote command. Gives a quote and allows the user to
+# NOTE: guess who said it
 @bot.slash_command(
     name="quote",
     description="Name the person who said the quote!",
@@ -95,10 +96,16 @@ async def quote(ctx, channel: discord.TextChannel):
 async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
 
     timer_embed = discord.Embed(
-        title="Timer", description=f"Timer set for {hours}h {minutes}m {seconds}s"
+        title="Timer",
+        description=f"Timer set for {hours}h {minutes}m {seconds}s",
+        color=bot_color,
     )
 
-    await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
+    timer_embed.add_field(name="Test Field", value=":rotating_light:")
+
+    await ctx.respond(
+        f"Timer set for {hours}h {minutes}m {seconds}s", embeds=[timer_embed]
+    )
     timer_time = (hours * 3600) + (minutes * 60) + seconds
 
     await asyncio.sleep(timer_time)
