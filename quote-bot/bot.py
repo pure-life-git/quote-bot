@@ -132,9 +132,9 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         progress_string = ""
         for i in range(0, 9):
             if (i * 10) > res["percent"]:
-                progress_string += ":full_moon:"
-            else:
                 progress_string += ":new_moon:"
+            else:
+                progress_string += ":full_moon:"
 
         timer_embed.add_field(name="Percent", value=res["percent"])
         timer_embed.add_field(name="Time Left", value=res["time_left"])
@@ -142,6 +142,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         timer_embed.add_field(name="Completion", value=progress_string)
 
         await message.edit_original_response(embeds=[timer_embed])
+        await asyncio.sleep(1)
 
     await ctx.followup.send(":rotating_light: Timer done! :rotating_light:")
 
