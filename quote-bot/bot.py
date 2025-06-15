@@ -125,7 +125,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
             color=bot_color,
         )
         progress_string = ""
-        for i in range(0, 9):
+        for i in range(0, 10):
             if (i * 10) > res["percent"]:
                 progress_string += ":new_moon:"
             else:
@@ -137,7 +137,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         timer_embed.add_field(name="Completion", value=progress_string)
 
         await message.edit_original_response(embeds=[timer_embed])
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
 
     await ctx.followup.send(":rotating_light: Timer done! :rotating_light:")
 
