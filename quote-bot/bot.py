@@ -97,7 +97,7 @@ def get_timer_progress(duration, start_time):
     print(f"finish_time: {finish_time}")
     print(f"time_left_secs: {time_left_secs}")
 
-    time_left_percent = str(100 - (round((time_left_secs / duration) * 100))) + "%"
+    time_left_percent = 100 - (round((time_left_secs / duration) * 100))
 
     time_left = str(round(datetime.timedelta(seconds=time_left_secs).total_seconds()))
 
@@ -119,22 +119,29 @@ def get_timer_progress(duration, start_time):
 async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     start_time = time.time()
     timer_time = (hours * 3600) + (minutes * 60) + seconds
+    finish_time = start_time + timer_time
 
-    res = get_timer_progress(timer_time, start_time)
+    message = await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
+    while time.time() < finish_time:
+        res = get_timer_progress(timer_time, start_time)
+        timer_embed = discord.Embed(
+            title="Timer",
+            description=f"Timer set for {hours}h {minutes}m {seconds}s",
+            color=bot_color,
+        )
+        progress_string = ""
+        for i in range(0, 9):
+            if (i * 10) > res["percent"]:
+                progress_string += ":full_moon:"
+            else:
+                progress_string += ":new_moon:"
 
-    timer_embed = discord.Embed(
-        title="Timer",
-        description=f"Timer set for {hours}h {minutes}m {seconds}s",
-        color=bot_color,
-    )
+        timer_embed.add_field(name="Percent", value=res["percent"])
+        timer_embed.add_field(name="Time Left", value=res["time_left"])
+        timer_embed.add_field(name="Finish Time", value=res["finish_time"])
+        timer_embed.add_field(name="Completion", value=progress_string)
 
-    timer_embed.add_field(name="Percent", value=res["percent"])
-    timer_embed.add_field(name="Time Left", value=res["time_left"])
-    timer_embed.add_field(name="Finish Time", value=res["finish_time"])
-
-    await ctx.respond(embeds=[timer_embed])
-
-    await asyncio.sleep(timer_time)
+        await message.edit_original_response(embeds=[timer_embed])
 
     await ctx.followup.send(":rotating_light: Timer done! :rotating_light:")
 
