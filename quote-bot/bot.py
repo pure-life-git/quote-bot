@@ -110,12 +110,7 @@ def get_timer_progress(duration, start_time):
     }
 
 
-@bot.slash_command(
-    name="timer",
-    guild_ids=[
-        "599808865093287956",
-    ],
-)
+@bot.slash_command(name="timer")
 async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     start_time = time.time()
     timer_time = (hours * 3600) + (minutes * 60) + seconds
