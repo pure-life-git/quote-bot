@@ -120,7 +120,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         if hours > 0
         else "" + str(minutes) if (minutes > 0 or hours > 0) else "" + str(seconds)
     )
-
+    res = get_timer_progress(timer_time, start_time)
     message = await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
     while time.time() < finish_time:
         res = get_timer_progress(timer_time, start_time)
