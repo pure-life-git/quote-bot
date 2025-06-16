@@ -115,13 +115,18 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     start_time = time.time()
     timer_time = (hours * 3600) + (minutes * 60) + seconds
     finish_time = start_time + timer_time
+    pretty_time = (
+        str(hours)
+        if hours > 0
+        else "" + str(minutes) if (minutes > 0 or hours > 0) else "" + str(seconds)
+    )
 
     message = await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
     while time.time() < finish_time:
         res = get_timer_progress(timer_time, start_time)
         timer_embed = discord.Embed(
-            title="Timer",
-            description=f"Timer set for {hours}h {minutes}m {seconds}s",
+            title=pretty_time,
+            description=f"Timer end at {res["finish_time"].strftime("%H:%M:%S")}",
             color=bot_color,
         )
         progress_string = ""
@@ -139,7 +144,18 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         await message.edit_original_response(embeds=[timer_embed])
         await asyncio.sleep(0.5)
 
-    await ctx.followup.send(":rotating_light: Timer done! :rotating_light:")
+    timer_embed = discord.Embed(
+        title=pretty_time + "Timer", description=f"Timer finished!", color=bot_color
+    )
+    timer_embed.add_field(name="Percent", value="100%")
+    timer_embed.add_field(name="Time Left", value="00:00:00")
+    timer_embed.add_field(name="Finish Time", value=res["finish_time"])
+    timer_embed.add_field(
+        name="Completion",
+        value=":full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon:",
+    )
+
+    await message.edit_original_response(embeds=[timer_embed])
 
 
 bot.run(token)
