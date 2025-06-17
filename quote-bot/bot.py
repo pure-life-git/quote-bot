@@ -92,11 +92,7 @@ async def quote(ctx, channel: discord.TextChannel):
 def get_timer_progress(duration, start_time):
     cur_time = time.time()
     finish_time_ts = start_time + duration
-    time_left_secs = finish_time - cur_time
-
-    print(f"cur_time: {cur_time}")
-    print(f"finish_time: {finish_time}")
-    print(f"time_left_secs: {time_left_secs}")
+    time_left_secs = finish_time_ts - cur_time
 
     time_left_percent = 100 - (round((time_left_secs / duration) * 100))
 
