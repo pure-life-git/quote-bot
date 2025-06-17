@@ -91,7 +91,7 @@ async def quote(ctx, channel: discord.TextChannel):
 
 def get_timer_progress(duration, start_time):
     cur_time = time.time()
-    finish_time = start_time + duration
+    finish_time_ts = start_time + duration
     time_left_secs = finish_time - cur_time
 
     print(f"cur_time: {cur_time}")
@@ -102,13 +102,14 @@ def get_timer_progress(duration, start_time):
 
     time_left = str(round(datetime.timedelta(seconds=time_left_secs).total_seconds()))
 
-    finish_time = datetime.datetime.fromtimestamp(finish_time)
+    finish_time = datetime.datetime.fromtimestamp(finish_time_ts)
     finish_time_form = finish_time.strftime("%H:%M:%S")
 
     return {
         "percent": time_left_percent,
         "time_left": time_left,
         "finish_time": finish_time,
+        "finish_time_ts": finish_time_ts,
         "finish_time_form": finish_time_form,
     }
 
@@ -133,9 +134,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         res = get_timer_progress(timer_time, start_time)
         timer_embed = discord.Embed(
             title=pretty_time,
-            description=f"Timer end at {res["finish_time_form"]}",
             color=bot_color,
-            timestamp=res["finish_time"],
         )
         progress_string = ""
         for i in range(0, 10):
@@ -146,7 +145,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
 
         timer_embed.add_field(name="Percent", value=res["percent"])
         timer_embed.add_field(name="Time Left", value=res["time_left"])
-        timer_embed.add_field(name="Finish Time", value=res["finish_time"])
+        timer_embed.add_field(name="Finish Time", value=f"<t:res['finish_time_ts']:t>")
         timer_embed.add_field(name="Completion", value=progress_string)
 
         await message.edit_original_response(embeds=[timer_embed])
