@@ -129,8 +129,9 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     while time.time() < finish_time:
         res = get_timer_progress(timer_time, start_time)
         timer_embed = discord.Embed(
-            title=pretty_time,
+            title=pretty_time + " Timer",
             color=bot_color,
+            description=f"<t:{res['finish_time_ts']}:t>",
         )
         progress_string = ""
         for i in range(0, 10):
