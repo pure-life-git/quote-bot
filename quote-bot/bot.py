@@ -101,7 +101,7 @@ def get_timer_progress(duration, start_time):
 
     time_left = str(round(datetime.timedelta(seconds=time_left_secs).total_seconds()))
 
-    finish_time_form = str(datetime.datetime.fromtimestamp(finish_time))
+    finish_time_form = datetime.datetime.fromtimestamp(finish_time).strftime("%H:%M:%S")
 
     return {
         "percent": time_left_percent,
@@ -126,7 +126,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         res = get_timer_progress(timer_time, start_time)
         timer_embed = discord.Embed(
             title=pretty_time,
-            description=f"Timer end at {res["finish_time"].strftime("%H:%M:%S")}",
+            description=f"Timer end at {res["finish_time"]}",
             color=bot_color,
         )
         progress_string = ""
