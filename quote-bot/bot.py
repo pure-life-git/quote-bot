@@ -134,6 +134,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
             description=f"<t:{res['finish_time_ts']}:t>",
             timestamp=res["finish_time"],
         )
+        timer_embed.set_footer(text="Test footer")
         progress_string = ""
         for i in range(0, 10):
             if (i * 10) > res["percent"]:
