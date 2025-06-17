@@ -132,6 +132,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
             title=pretty_time + " Timer",
             color=bot_color,
             description=f"<t:{res['finish_time_ts']}:t>",
+            timestamp=res["finish_time"],
         )
         progress_string = ""
         for i in range(0, 10):
