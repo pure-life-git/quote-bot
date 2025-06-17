@@ -141,7 +141,9 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
 
         timer_embed.add_field(name="Percent", value=res["percent"])
         timer_embed.add_field(name="Time Left", value=res["time_left"])
-        timer_embed.add_field(name="Finish Time", value=f"<t:res['finish_time_ts']:t>")
+        timer_embed.add_field(
+            name="Finish Time", value=f"<t:{res['finish_time_ts']}:t>"
+        )
         timer_embed.add_field(name="Completion", value=progress_string)
 
         await message.edit_original_response(embeds=[timer_embed])
