@@ -7,6 +7,7 @@ import sqlite3
 import time
 
 import discord
+import pytz
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -101,12 +102,14 @@ def get_timer_progress(duration, start_time):
 
     time_left = str(round(datetime.timedelta(seconds=time_left_secs).total_seconds()))
 
-    finish_time_form = datetime.datetime.fromtimestamp(finish_time).strftime("%H:%M:%S")
+    finish_time = datetime.datetime.fromtimestamp(finish_time)
+    finish_time_form = finish_time.strftime("%H:%M:%S")
 
     return {
         "percent": time_left_percent,
         "time_left": time_left,
-        "finish_time": finish_time_form,
+        "finish_time": finish_time,
+        "finish_time_form": finish_time_form,
     }
 
 
@@ -116,9 +119,13 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     timer_time = (hours * 3600) + (minutes * 60) + seconds
     finish_time = start_time + timer_time
     pretty_time = (
-        str(hours)
+        (str(hours) + "h")
         if hours > 0
-        else "" + str(minutes) if (minutes > 0 or hours > 0) else "" + str(seconds)
+        else (
+            "" + (str(minutes) + "m")
+            if (minutes > 0 or hours > 0)
+            else "" + (str(seconds) + "s")
+        )
     )
     res = get_timer_progress(timer_time, start_time)
     message = await ctx.respond(f"Timer set for {hours}h {minutes}m {seconds}s")
@@ -126,8 +133,9 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         res = get_timer_progress(timer_time, start_time)
         timer_embed = discord.Embed(
             title=pretty_time,
-            description=f"Timer end at {res["finish_time"]}",
+            description=f"Timer end at {res["finish_time_form"]}",
             color=bot_color,
+            timestamp=res["finish_time"],
         )
         progress_string = ""
         for i in range(0, 10):
@@ -145,7 +153,7 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         await asyncio.sleep(0.5)
 
     timer_embed = discord.Embed(
-        title=pretty_time + "Timer", description=f"Timer finished!", color=bot_color
+        title=pretty_time + " Timer", description=f"Timer finished!", color=bot_color
     )
     timer_embed.add_field(name="Percent", value="100%")
     timer_embed.add_field(name="Time Left", value="00:00:00")
