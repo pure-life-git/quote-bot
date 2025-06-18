@@ -131,10 +131,9 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
         timer_embed = discord.Embed(
             title=pretty_time + " Timer",
             color=bot_color,
-            description=f"<t:{res['finish_time_ts']}:t>",
             timestamp=res["finish_time"],
         )
-        timer_embed.set_footer(text="Test footer")
+        timer_embed.set_footer(text="Timer finishes at")
         progress_string = ""
         for i in range(0, 10):
             if (i * 10) > res["percent"]:
@@ -144,20 +143,22 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
 
         timer_embed.add_field(name="Percent", value=res["percent"])
         timer_embed.add_field(name="Time Left", value=res["time_left"])
-        timer_embed.add_field(
-            name="Finish Time", value=f"<t:{res['finish_time_ts']}:t>"
-        )
+        timer_embed.add_field(name="Finish Time", value={res["finish_time_form"]})
         timer_embed.add_field(name="Completion", value=progress_string)
 
-        await message.edit_original_response(embeds=[timer_embed])
+        await message.edit_original_response(content="", embeds=[timer_embed])
         await asyncio.sleep(0.5)
 
     timer_embed = discord.Embed(
-        title=pretty_time + " Timer", description=f"Timer finished!", color=bot_color
+        title=pretty_time + " Timer",
+        description=f"Timer finished!",
+        color=bot_color,
+        timestamp=res["finish_time"],
     )
+    timer_embed.set_footer(text="Timer finished at")
     timer_embed.add_field(name="Percent", value="100%")
     timer_embed.add_field(name="Time Left", value="00:00:00")
-    timer_embed.add_field(name="Finish Time", value=res["finish_time"])
+    timer_embed.add_field(name="Finish Time", value=res["finish_time_form"])
     timer_embed.add_field(
         name="Completion",
         value=":full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon::full_moon:",
