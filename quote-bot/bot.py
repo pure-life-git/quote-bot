@@ -11,8 +11,6 @@ import pytz
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# from siegeapi import Auth
-
 load_dotenv()
 
 
