@@ -15,7 +15,6 @@ load_dotenv()
 bot = discord.Bot(command_prefix="?", intents=discord.Intents.all())
 bot_color = discord.Color.from_rgb(21, 96, 189)
 
-
 token = os.getenv("TOKEN")
 
 conn = sqlite3.connect("bot.db")
