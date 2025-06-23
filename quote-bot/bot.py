@@ -22,8 +22,6 @@ token = os.getenv("TOKEN")
 conn = sqlite3.connect("bot.db")
 cur = conn.cursor()
 
-# siege_auth = Auth(os.getenv("UBI_EMAIL"), os.getenv("UBI_PSWD"))
-
 guild_ids = {"truck_stop": 644075079558365184, "alley": 599808865093287956}
 
 
