@@ -166,7 +166,11 @@ async def on_message(msg: discord.Message):
     print(msg)
     daniel = bot.get_user(149337676343017472)
     theo = bot.get_user(288710564367171595)
-    if len(msg.attachments) != 0 and msg.attachments[0].media_type.startswith("image"):
+    if (
+        msg.author in [daniel, theo]
+        and len(msg.attachments) != 0
+        and msg.attachments[0].content_type.startswith("image")
+    ):
         await msg.reply(content="Haha this is so funny am i right guys?")
 
 
