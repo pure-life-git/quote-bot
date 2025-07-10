@@ -7,6 +7,7 @@ import sqlite3
 import time
 
 import discord
+from discord.commands import options
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -160,6 +161,11 @@ async def set_timer(ctx, hours: int = 0, minutes: int = 0, seconds: int = 0):
     await message.edit_original_response(embeds=[timer_embed])
 
 
+# @bot.slash_command(name="rps")
+# @options("choice")
+# def rps(ctx: discord.ApplicationContext, choice: str)
+
+
 @bot.event
 async def on_message(msg: discord.Message):
     print("got a message")
@@ -168,6 +174,7 @@ async def on_message(msg: discord.Message):
     theo = bot.get_user(288710564367171595)
     if (
         msg.author in [daniel, theo]
+        and msg.channel == bot.get_channel(644075079558365187)
         and len(msg.attachments) != 0
         and msg.attachments[0].content_type.startswith("image")
     ):
